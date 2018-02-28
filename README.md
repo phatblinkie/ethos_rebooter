@@ -5,6 +5,8 @@ This script is a php script that calls ethos own internal functions to gather up
 how do you install?
 just clone this repo to your /home/ethos/ folder, or copy the sanity.php file.
 
+`git clone https://github.com/phatblinkie/ethos_rebooter.git`
+
 what are the settings?
 The script has currently four values you can modify, you can manually run the script to test with 'php sanity.php' if you set the debug to 1, then you will see the output of the scripts interpreted results.
 inside the top of the sanity.php script, you can modify the following
@@ -31,7 +33,7 @@ inside the top of the sanity.php script, you can modify the following
 How do I run it automatically?
 you can setup a crontab job to run it, add this line to the end of your crontab file
 
-`*/5 * * * * /usr/bin/php sanity.php`
+`*/5 * * * * /usr/bin/php /home/ethos/ethos_rebooter/sanity.php`
 
 this can be done with the command `crontab -e`
 
