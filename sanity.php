@@ -5,9 +5,9 @@
 
 //set some variables.
 //debug = output text about what was done , 0 for no text, 1 for text
-$debug = "0";
+$debug = "1";
 //$minhash = the minimum amount of combined hashpower, no decimals please. try to make this  the value when about 2 gpus have failed, to account for any dev fee problems
-$minhash = "50";
+$minhash = "290";
 //$uptime = the minimum amount of uptime for the rig in seconds, before verifying the stats is considered a valid task
 $uptime = "500";
 //threshold = number of times in a row, the values for $minhash are below the set value, that means an action is required, for example to reboot only after 2 fails in a row. This is needed due to things like the claymore dev fee, which can skew the hash rate results
@@ -37,9 +37,18 @@ if ( trim(`cat /proc/uptime | cut -d"." -f1`) <= $uptime) {
         }
 
 //include native ethos functions
-include("/opt/ethos/lib/functions.php");
+//include("/opt/ethos/lib/functions.php");
 //grab stats array locally
-$data = get_stats();
+//$data = get_stats();
+
+function get_somestats() {
+//helps with a stuck crashed miner problem
+        $send['hash'] = trim(`tail -10 /var/run/ethos/miner_hashes.file | sort -V | tail -1 | tr ' ' '\n' | awk '{sum += \$1} END {print sum}'`);
+        $send['miner_hashes'] = trim(`tail -10 /var/run/ethos/miner_hashes.file | sort -V | tail -1`);
+return $send;
+}
+
+$data = get_somestats();
 
 if ("$debug" == "1") { print_r($data); }
 
@@ -75,7 +84,7 @@ if ( $hash < $minhash)
                 //could be replaced with other commands if desired
                 $date = `date`;
                 `echo "Rebooting, hash = $hash, minhash = $minhash, failcount = $failcount, threshold = $threshold, miner data = $miner_hashes, @ $date" >>/home/ethos/reboot.log`;
-                `/opt/ethos/bin/r`;
+                `/usr/bin/sudo /opt/ethos/bin/hard-reboot`;
                 }
         }
 //remove status file to reset count if hash was ok
